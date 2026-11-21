@@ -1,0 +1,190 @@
+﻿<Window x:Class="калькулятор.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Калькулятор" Height="640" Width="660"
+        MinHeight="600" MinWidth="620" FontFamily="Segoe UI"
+        PreviewTextInput="Window_PreviewTextInput"
+        KeyDown="Window_KeyDown">
+
+
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#F6F1FD" Offset="0"/>
+            <GradientStop Color="#E3D7F6" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Window.Resources>
+        <!-- Базовый стиль кнопки: скругление + реакция на наведение/нажатие -->
+        <Style x:Key="BtnBase" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#4B3A6B"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="14">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.55"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="NumBtn" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style x:Key="FuncBtn" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+            <Setter Property="Background" Value="#EADFF9"/>
+        </Style>
+        <Style x:Key="OpBtn" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+            <Setter Property="Background" Value="#D4C2F2"/>
+            <Setter Property="Foreground" Value="#5B3FA0"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style x:Key="EqBtn" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+            <Setter Property="Background" Value="#9B7BD9"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style x:Key="MemBtn" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#7E62B5"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="250"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ЛЕВАЯ ЧАСТЬ: дисплей, память, кнопки -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="#B3FFFFFF" CornerRadius="20"
+                    Padding="16,10" Margin="4,0,4,6">
+
+
+                <StackPanel>
+                    <Grid>
+                        <TextBlock x:Name="txtMemory" FontWeight="Bold"
+                                   Foreground="#9B7BD9" HorizontalAlignment="Left"/>
+                        <TextBlock x:Name="txtExpression" FontSize="16"
+                                   Foreground="#8A77AD" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Right" Height="64">
+                        <TextBlock x:Name="txtResult" Text="0" FontSize="48"
+                                   FontWeight="SemiBold" Foreground="#4B3A6B"/>
+                    </Viewbox>
+                </StackPanel>
+            </Border>
+            <UniformGrid Grid.Row="1" Columns="4" Height="34" Margin="4,0,4,0">
+                <Button Content="MC" Style="{StaticResource MemBtn}" Click="Button_Click"/>
+                <Button Content="MR" Style="{StaticResource MemBtn}" Click="Button_Click"/>
+                <Button Content="M+" Style="{StaticResource MemBtn}" Click="Button_Click"/>
+                <Button Content="M-" Style="{StaticResource MemBtn}" Click="Button_Click"/>
+            </UniformGrid>
+
+            <UniformGrid Grid.Row="2" Columns="4" Rows="6">
+                <Button Content="%"   Style="{StaticResource FuncBtn}" Click="Button_Click"/>
+                <Button Content="CE"  Style="{StaticResource FuncBtn}" Click="Button_Click"/>
+                <Button Content="C"   Style="{StaticResource FuncBtn}" Click="Button_Click"/>
+                <Button Content="⌫"   Style="{StaticResource FuncBtn}" Click="Button_Click"/>
+
+                <Button Content="1/x" Style="{StaticResource FuncBtn}" Click="Button_Click"/>
+                <Button Content="x²"  Style="{StaticResource FuncBtn}" Click="Button_Click"/>
+                <Button Content="√"   Style="{StaticResource FuncBtn}" Click="Button_Click"/>
+                <Button Content="÷"   Style="{StaticResource OpBtn}"   Click="Button_Click"/>
+
+                <Button Content="7" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="8" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="9" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="×" Style="{StaticResource OpBtn}"  Click="Button_Click"/>
+
+                <Button Content="4" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="5" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="6" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="-" Style="{StaticResource OpBtn}"  Click="Button_Click"/>
+
+                <Button Content="1" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="2" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="3" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="+" Style="{StaticResource OpBtn}"  Click="Button_Click"/>
+
+                <Button Content="±" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="0" Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="." Style="{StaticResource NumBtn}" Click="Button_Click"/>
+                <Button Content="=" Style="{StaticResource EqBtn}"  Click="Button_Click"/>
+            </UniformGrid>
+        </Grid>
+
+        <!-- ПРАВАЯ ЧАСТЬ: история из БД -->
+        <Border Grid.Column="1" Margin="8,0,0,0" Background="#B3FFFFFF"
+                CornerRadius="20" Padding="12">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="История" FontSize="18"
+                           FontWeight="SemiBold" Foreground="#4B3A6B" Margin="0,0,0,8"/>
+
+                <Border DockPanel.Dock="Top" Background="White" CornerRadius="10"
+                        Margin="0,0,0,8" Padding="8,4">
+                    <TextBox x:Name="txtSearch" BorderThickness="0" Background="Transparent"
+                             Foreground="#4B3A6B" ToolTip="Поиск по истории"
+                             TextChanged="txtSearch_TextChanged"/>
+                </Border>
+
+                <Button DockPanel.Dock="Bottom" Content="Очистить историю" FontSize="14"
+                        Height="36" Margin="0,8,0,0" Style="{StaticResource FuncBtn}"
+                        Click="ClearHistory_Click"/>
+
+                <ListBox x:Name="lstHistory" Background="Transparent" BorderThickness="0"
+                         HorizontalContentAlignment="Stretch"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectionChanged="lstHistory_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="2,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Expression}" FontSize="12"
+                                               Foreground="#8A77AD" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding Result}" FontSize="20"
+                                               FontWeight="SemiBold" Foreground="#4B3A6B"/>
+                                    <TextBlock Text="{Binding CreatedAt}" FontSize="10"
+                                               Foreground="#B3A5CC"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="✕" Tag="{Binding Id}"
+                                        Style="{StaticResource MemBtn}" Width="26" Height="26"
+                                        VerticalAlignment="Top" Click="DeleteItem_Click"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>
